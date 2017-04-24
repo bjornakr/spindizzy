@@ -1,4 +1,4 @@
-import { List, Map, fromJS } from "immutable"
+import { List, Map } from "immutable"
 
 export namespace Store {
     export type Counter = { value: number }
@@ -17,7 +17,7 @@ export namespace Store {
         id: string,
         touched: boolean
         text: string,
-        type: "SINGLE" | "MULTI" | "TEXT",
+        type: "SINGLE" | "MULTI" | "TEXT" | "END",
         params: SingleParams | TextParams
     }
 

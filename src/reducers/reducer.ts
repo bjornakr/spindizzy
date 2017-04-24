@@ -56,8 +56,15 @@ const q3: Store.Question = {
     params: []
 }
 
+const qend: Store.Question = {
+    id: "complete",
+    touched: false,
+    text: "All done! Click submit.",
+    type: "END",
+    params: []
+}
 
-const questionnaire: List<Store.Question> = List([q1, q2, q3])
+const questionnaire: List<Store.Question> = List([q1, q2, q3, qend])
 
 
 function initializeMulti(currentQuestion: Store.Question, session: Store.Session): Store.Session {
@@ -84,7 +91,7 @@ function goToQuestion(index: number, session: Store.Session): Store.Session {
             params: currentQuestion.params
         };
     // const newQuestionnaire: List<Store.Question> 
-    const newQuestionnaire: List<Store.Question> = questionnaire; //session.questionnaire.splice(index, 1, newQuestion).toList();
+    const newQuestionnaire: List<Store.Question> = session.questionnaire.splice(index, 1, newQuestion).toList();
     const newSession: Store.Session = //fromJS(session).updateIn("questionnaire", newQuestionnaire)
         {
             currentIndex: index,
@@ -135,7 +142,12 @@ function session(state: Store.Session = sessionInitialState, action: QuestionAct
         case QuestionActions.NEXT:
             return goToQuestion(currentIndex + 1, state)
         case QuestionActions.PREVIOUS:
-            return goToQuestion(currentIndex - 1, state)
+            if (currentIndex <= 0) {
+                return state;
+            }
+            else {
+                return goToQuestion(currentIndex - 1, state)
+            }
     }
 
     return state

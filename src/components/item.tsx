@@ -7,9 +7,11 @@ import { Ruru } from "../store/constants"
 import { selectChoice, next, previous } from "../actions/question"
 import { SingleChoice } from "./SingleChoice"
 import { MultiChoice } from "./MultiChoice"
+import { Debug } from "./Debug"
 import { TextLine} from "./TextLine"
 
 const mapStateToProps = (state: S.All, ownProps: OwnProps): ConnectedState => ({
+    previousIsDisabled: state.session.currentIndex === 0,
     currentQuestion: state.session.questionnaire.get(state.session.currentIndex)
 })
 
@@ -28,6 +30,7 @@ interface OwnProps {
 }
 
 interface ConnectedState {
+    previousIsDisabled: boolean,
     currentQuestion: S.Question
 }
 
@@ -65,13 +68,26 @@ class ItemComponent extends React.Component<ConnectedState & ConnectedDispatch &
         }
     }
 
+    private selectControlComponent = () => {
+        const { currentQuestion, previousIsDisabled } = this.props
+
+        if (currentQuestion.type === "END") {
+            return  <div><button onClick={this.onClickPrevious} disabled={previousIsDisabled}>⯇</button><button>Submit</button></div>
+        }
+        else {
+            return <div><button onClick={this.onClickPrevious} disabled={previousIsDisabled}>⯇</button><button onClick={this.onClickNext}>⯈</button></div>
+        }
+    }
+
     render() {
-        const { currentQuestion } = this.props
+        const { currentQuestion, previousIsDisabled } = this.props
 
         return <div>
                 <h3>{currentQuestion.text}</h3>
                 {this.selectQuestionComponent(currentQuestion)}
-                <button onClick={this.onClickPrevious}>⯇</button><button onClick={this.onClickNext}>⯈</button>
+                {this.selectControlComponent()}
+                <hr />
+                <Debug />
             </div>
     }
 }
